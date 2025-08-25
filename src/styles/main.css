@@ -1,0 +1,223 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+}
+
+/* Center the main content */
+main {
+    width: 80%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* Style the form */
+#upload-form {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Style the file content preview */
+#file-content {
+    width: 100%;
+    margin: 20px 0;
+    padding: 10px;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the table */
+#standings {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    table-layout: fixed;
+}
+
+#standings th,
+#standings td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 12px;
+}
+
+#standings th {
+    background-color: #35424a;
+    color: white;
+}
+
+#standings tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#standings tr:hover {
+    background-color: #f0f0f0;
+}
+
+/* Top 8 styling */
+#standings tr:nth-child(8) {
+    border-bottom: 3px solid #35424a;
+    /* Thick border after 8th place */
+}
+
+/* Make top 8 slightly more prominent */
+#standings tr:nth-child(-n+8) td {
+    font-weight: 500;
+    background-color: #fff;
+    /* Override even row coloring for top 8 */
+}
+
+/* Keep hover effect for all rows */
+#standings tr:hover td {
+    background-color: #f0f0f0;
+}
+
+/* Additional styling for top 3 */
+#standings tr:nth-child(1) td {
+    background-color: #ffd70033;
+    /* Gold tint */
+}
+
+#standings tr:nth-child(2) td {
+    background-color: #c0c0c033;
+    /* Silver tint */
+}
+
+#standings tr:nth-child(3) td {
+    background-color: #cd7f3233;
+    /* Bronze tint */
+}
+
+/* Specific widths for each column */
+#standings th:nth-child(1),
+#standings td:nth-child(1) { /* Rank */
+    width: 50px;
+    min-width: 50px;
+    text-align: center;
+}
+
+#standings th:nth-child(2),
+#standings td:nth-child(2) { /* Name */
+    width: 200px;  /* Reduced from 250px */
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#standings th:nth-child(3),
+#standings td:nth-child(3) { /* Points */
+    width: 70px;
+    min-width: 70px;
+    padding-right: 12px;
+    text-align: center;
+}
+
+#standings th:nth-child(4),
+#standings td:nth-child(4),
+#standings th:nth-child(5),
+#standings td:nth-child(5) { /* Best/Worst */
+    width: 50px;
+    min-width: 50px;
+    text-align: center;
+}
+
+#standings th:nth-child(6),
+#standings td:nth-child(6) { /* OMW */
+    width: 80px;
+    min-width: 80px;
+    text-align: center;
+}
+
+#standings th:nth-child(7),
+#standings td:nth-child(7) { /* Attendance */
+    width: 70px;
+    min-width: 70px;
+    text-align: center;
+}
+
+/* Responsive table adjustments */
+@media screen and (max-width: 768px) {
+
+    /* Make the container full width on mobile */
+    main {
+        width: 95%;
+        padding: 0 10px;
+    }
+
+    /* Adjust table for better mobile view */
+    #standings {
+        font-size: 0.9rem;
+        table-layout: auto;
+    }
+
+    /* Shorten headers on mobile */
+    #standings th:nth-child(4),
+    #standings th:nth-child(5) {
+        font-size: 0.8rem;
+    }
+
+    /* Make columns more compact */
+    #standings th,
+    #standings td {
+        padding: 6px 4px;
+        width: auto;
+    }
+
+    /* For mobile screens, let it be more flexible */
+    #standings th:nth-child(2),
+    #standings td:nth-child(2) {
+        min-width: 100px;
+        max-width: none;
+    }
+}
+
+#standings td:last-child {
+    text-align: center;
+}
+
+#standings .perfect {
+    color: #4ade80;
+    /* lighter green */
+    font-size: 1.4em;
+    /* bigger checkmark */
+    font-weight: bold;
+    /* make it thicker */
+}
+
+#standings .missed {
+    color: #f87171;
+    /* softer red */
+    opacity: 0.8;
+    /* make it slightly less vibrant */
+    letter-spacing: 3px;
+    /* more space between X's */
+    font-size: 0.9em;
+    /* smaller X */
+}
+
+.footer {
+    text-align: center;
+    padding: 10px 0;
+    background: #35424a;
+    color: #ffffff;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}

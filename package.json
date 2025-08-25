@@ -1,0 +1,30 @@
+{
+  "name": "mtg-standings-site",
+  "version": "1.0.0",
+  "description": "A simple site to display Magic: The Gathering event standings.",
+  "main": "src/js/app.js",
+  "scripts": {
+    "start": "live-server src",
+    "build": "echo 'Build step can be added here.'"
+  },
+  "keywords": [
+    "magic",
+    "mtg",
+    "standings",
+    "web"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "live-server": "^1.2.1"
+  },
+  "devDependencies": {},
+  "homepage": "https://github.com/yourusername/mtg-standings-site",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/mtg-standings-site.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/mtg-standings-site/issues"
+  }
+}

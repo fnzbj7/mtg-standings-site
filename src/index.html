@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>MTG Standings</title>
+		<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAMFBMVEUAAADMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMyRtK0KAAAAEHRSTlMAECAwQFBgcICPn6+/z9/vIxqCigAAAMlJREFUOMuFU0kOxCAMq4OzZPn/f2fLMNCqrVSpAtsJqLX+GGOttR4uRf4nxjD3hM8+volRtnl1m7tDSQx4SzwiIrOQmPAq8brEifLly+6qxCRxouPJskT+nFg4kQwZCxJTxKQEBxLrJE4Sm/+KxIjc8xIXSkRI3CRenHhQIjNLUoK9uEnsnnhRQlaJHUh8uC+xS5y4RuLb7xInSsiRuIXEgxJckjiQuPEcJUQPi0hQIsKVSDBKvGpfYpL48ERQ4kUJSSQkVpLwA9s8G+pXEr8SAAAAAElFTkSuQmCC" />
+		<link rel="stylesheet" href="styles/main.css" />
+	</head>
+	<body>
+		<header>
+			<h1>Magic: The Gathering Standings</h1>
+			<p>Event Date: <span id="event-date"></span></p>
+			<div class="scoring-toggle">
+				<label>
+					<input type="checkbox" id="special-scoring" />
+					Use Special Scoring (Double Best, Ignore Worst)
+				</label>
+			</div>
+		</header>
+		<main>
+			<form id="upload-form">
+				<input id="file-input" type="file" accept=".txt,.json" />
+			</form>
+
+			<!-- <pre id="file-content" style="white-space: pre-wrap"></pre> -->
+			<table id="standings">
+				<thead>
+					<tr>
+						<th>Rank</th>
+						<th>Name</th>
+						<th>Points</th>
+						<th>Best</th>
+						<th>Worst</th>
+						<th>OMW%</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Player standings will be dynamically inserted here -->
+				</tbody>
+			</table>
+		</main>
+		<script src="js/data.js"></script>
+		<script type="module" src="js/app.js"></script>
+	</body>
+</html>
