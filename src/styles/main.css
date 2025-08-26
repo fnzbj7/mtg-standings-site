@@ -188,6 +188,48 @@ main {
     }
 }
 
+/* Hide OMW column on very narrow screens */
+@media screen and (max-width: 466px) {
+    #standings th:nth-child(6),
+    #standings td:nth-child(6) { /* OMW column */
+        display: none;
+    }
+}
+
+/* Change header text and further compress at very narrow screens */
+@media screen and (max-width: 408px) {
+    main {
+        width: 100%;
+        padding: 0;
+    }
+
+    #standings th:nth-child(1),
+    #standings td:nth-child(1) { 
+        width: 30px;
+        min-width: 30px;
+        padding-right: 6px;
+    }
+
+    #standings th:nth-child(3),
+    #standings td:nth-child(3) { 
+        width: 50px;
+        min-width: 50px;
+        padding-right: 6px;
+    }
+
+    #standings th:nth-child(3)::before {
+        content: 'Pts';
+    }
+    #standings th:nth-child(1)::before {
+        content: '#';
+    }
+    
+    #standings th:nth-child(1) span,
+    #standings th:nth-child(3) span {
+        display: none;
+    }
+}
+
 #standings td:last-child {
     text-align: center;
 }
