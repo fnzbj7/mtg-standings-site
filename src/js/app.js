@@ -76,7 +76,7 @@ fileInput.addEventListener('change', async (e) => {
             output.textContent = (typeof content === 'string') ? content : JSON.stringify(content, null, 2);
         }
         // Process the content and add to sessions
-        const sessionData = processEventData(content);
+        const sessionData = processEventData(content, file);
         if (sessionData) {
             if (!sessionData.eventDate) {
                 console.error('Session data missing event date');

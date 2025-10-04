@@ -59,8 +59,8 @@ const fetchEventData = async () => {
     }
 };
 
-const processEventData = (data) => {
-    // Accept object (already structured), JSON string, or raw standings text
+const processEventData = (data, file = null) => {
+    // Accept object (already structured), JSON string, raw standings text, or HTML content
     if (!data) return null;
     if (typeof data === 'object') {
         // assume structured: try to map into normalized shape if possible
@@ -80,6 +80,15 @@ const processEventData = (data) => {
     }
 
     if (typeof data === 'string') {
+        // Check if it's HTML content (file extension or HTML tags)
+        const isHtml = (file && file.name && file.name.toLowerCase().endsWith('.html')) || 
+                      data.includes('<html') || data.includes('<!DOCTYPE') || data.includes('<table');
+        
+        if (isHtml) {
+            const parsed = parseStandingsHTML(data, file);
+            return parsed;
+        }
+        
         // try JSON parse first
         try {
             const obj = JSON.parse(data);
@@ -184,6 +193,114 @@ function parseStandingsText(text) {
 
 };
 
+/**
+ * Parse HTML standings files (saved web pages from EventLink).
+ * Returns an object:
+ * {
+ *   title: string,
+ *   event: string,
+ *   eventDate: string,
+ *   raw: string,
+ *   players: [{ rank, name, points, omw, gw, ogw, rawLine }, ...]
+ * }
+ */
+function parseStandingsHTML(html, file = null) {
+    if (typeof html !== 'string') return null;
+    
+    const result = { title: null, event: null, eventDate: null, raw: html, players: [] };
+    
+    // Create a temporary DOM parser
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // Try to extract event name from page title or headings
+    const title = doc.querySelector('title');
+    if (title) {
+        result.title = title.textContent.trim();
+        // Extract event name from title if it follows pattern like "EventLink - Standings for LimCon 4"
+        const titleMatch = result.title.match(/Standings for (.+?)(?:_\d+)?$/);
+        if (titleMatch) {
+            result.event = titleMatch[1].trim();
+        }
+    }
+
+    // Try to get event date from file modification time if available
+    if (file && file.lastModified) {
+        result.eventDate = new Date(file.lastModified).toLocaleDateString();
+    }
+    
+    // Look for standings table - try multiple selectors
+    let standingsTable = doc.querySelector('table.standings') || 
+                        doc.querySelector('table[class*="standings"]') ||
+                        doc.querySelector('table');
+    
+    if (!standingsTable) {
+        console.warn('No standings table found in HTML');
+        return result;
+    }
+    
+    // Find all table rows
+    const rows = standingsTable.querySelectorAll('tr');
+    let headerRowIndex = -1;
+    
+    // Find the header row (contains "Rank", "Name", "Points", etc.)
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const text = row.textContent.toLowerCase();
+        if (text.includes('rank') && (text.includes('name') || text.includes('player')) && text.includes('points')) {
+            headerRowIndex = i;
+            break;
+        }
+    }
+    
+    // If no header found, assume first row is header
+    if (headerRowIndex === -1 && rows.length > 0) {
+        headerRowIndex = 0;
+    }
+    
+    // Parse data rows (after header)
+    for (let i = headerRowIndex + 1; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.querySelectorAll('td, th');
+        
+        if (cells.length < 4) continue; // Need at least rank, name, points, and one tiebreaker
+        
+        // Extract cell text values
+        const cellTexts = Array.from(cells).map(cell => {
+            return cell.textContent.trim().replace(/\s+/g, ' ');
+        });
+        
+        // Skip empty rows or rows that don't start with a number
+        if (!cellTexts[0] || !/^\d+$/.test(cellTexts[0])) continue;
+        
+        const parseNum = (s) => {
+            if (!s) return null;
+            const cleaned = s.replace(/[^0-9\.\-]/g, '');
+            const n = cleaned === '' ? null : Number(cleaned);
+            return Number.isFinite(n) ? n : null;
+        };
+        
+        // Map columns - typical order is: Rank, Name, Points, OMW%, GW%, OGW%
+        const player = {
+            rank: parseInt(cellTexts[0], 10) || null,
+            name: cellTexts[1] || null,
+            points: parseNum(cellTexts[2]),
+            omw: cellTexts.length > 3 ? parseNum(cellTexts[4]) : null,
+            gw: cellTexts.length > 4 ? parseNum(cellTexts[5]) : null,
+            ogw: cellTexts.length > 5 ? parseNum(cellTexts[6]) : null,
+            rawLine: cellTexts.join('\t')
+        };
+        
+        // Only add players with valid rank and name
+        if (player.rank && player.name) {
+            result.players.push(player);
+        }
+    }
+    
+    console.log(`Parsed ${result.players.length} players from HTML standings`);
+    return result;
+}
+
 
 // Add this instead:
 window.MTG = window.MTG || {};
@@ -191,3 +308,4 @@ window.MTG.fetchEventData = fetchEventData;
 window.MTG.processEventData = processEventData;
 window.MTG.readUploadedFile = readUploadedFile;
 window.MTG.parseStandingsText = parseStandingsText;
+window.MTG.parseStandingsHTML = parseStandingsHTML;
