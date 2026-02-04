@@ -54,16 +54,38 @@ function saveSessions() {
 
 const fileInput = document.getElementById('file-input');
 const output = document.getElementById('file-content'); // matches the <pre id="file-content">
-const specialScoringCheckbox = document.getElementById('special-scoring');
+let specialScoringCheckbox = document.getElementById('special-scoring');
+let scoringModeRadios = document.querySelectorAll('input[name="special-scoring-mode"]');
+let standardScoringRadio = document.getElementById('special-scoring-standard');
+let longScoringRadio = document.getElementById('special-scoring-long');
 
-// Add the checkbox if it doesn't exist in HTML
-if (!specialScoringCheckbox) {
-    const label = document.createElement('label');
-    label.innerHTML = `
-        <input type="checkbox" id="special-scoring" />
-        Use Special Scoring (Double Best, Ignore Worst)
-    `;
-    document.querySelector('#upload-form').appendChild(label);
+const DEFAULT_TOTAL_SESSIONS = 6;
+const LONG_TOTAL_SESSIONS = 9;
+const SCORING_MODE_STANDARD = 'standard';
+const SCORING_MODE_LONG = 'long';
+
+function getSelectedScoringMode() {
+    const checked = document.querySelector('input[name="special-scoring-mode"]:checked');
+    return checked ? checked.value : SCORING_MODE_STANDARD;
+}
+
+function isSpecialScoringEnabled() {
+    return specialScoringCheckbox && specialScoringCheckbox.checked;
+}
+
+function isLongScoringMode() {
+    return isSpecialScoringEnabled() && getSelectedScoringMode() === SCORING_MODE_LONG;
+}
+
+function getTotalSessionsTarget() {
+    return isLongScoringMode() ? LONG_TOTAL_SESSIONS : DEFAULT_TOTAL_SESSIONS;
+}
+
+function updateScoringModeAvailability() {
+    const disabled = !isSpecialScoringEnabled();
+    scoringModeRadios.forEach(radio => {
+        radio.disabled = disabled;
+    });
 }
 
 fileInput.addEventListener('change', async (e) => {
@@ -95,16 +117,30 @@ fileInput.addEventListener('change', async (e) => {
     }
 });
 
-specialScoringCheckbox.addEventListener('change', () => {
-    displayCombinedStandings(allSessions);
+if (specialScoringCheckbox) {
+    specialScoringCheckbox.addEventListener('change', () => {
+        updateScoringModeAvailability();
+        displayCombinedStandings(allSessions);
+    });
+}
+
+scoringModeRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+
+        displayCombinedStandings(allSessions);
+    });
 });
+
+updateScoringModeAvailability();
 
 function calculateCombinedStandings(sessions) {
     const playerMap = new Map();
-    const useSpecialScoring = specialScoringCheckbox.checked;
+    const useSpecialScoring = isSpecialScoringEnabled();
+    const useLongMode = isLongScoringMode();
     const uploadedSessionCount = sessions.length; // Number of events that have happened
+    const totalSessionsTarget = getTotalSessionsTarget();
 
-    sessions.forEach((session) => {
+    sessions.forEach((session, sessionIndex) => {
         // Track who participated in this session
         const participantsInSession = new Set(session.players.map(p => p.name));
         
@@ -116,7 +152,8 @@ function calculateCombinedStandings(sessions) {
             };
             existing.sessions.push({
                 points: player.points || 0,
-                omw: player.omw || null
+                omw: player.omw || null,
+                sessionIndex
             });
             existing.participatedSessions++;
             playerMap.set(player.name, existing);
@@ -127,7 +164,8 @@ function calculateCombinedStandings(sessions) {
             if (!participantsInSession.has(playerName)) {
                 playerData.sessions.push({
                     points: 0,  // Missing a session = 0 points
-                    omw: null
+                    omw: null,
+                    sessionIndex
                 });
             }
         });
@@ -135,10 +173,11 @@ function calculateCombinedStandings(sessions) {
 
     const combinedStandings = Array.from(playerMap.values()).map(player => {
         // Fill remaining sessions with null (future events)
-        while (player.sessions.length < 6) {
+        while (player.sessions.length < totalSessionsTarget) {
             player.sessions.push({
                 points: null,  // Future event = null points
-                omw: null
+                omw: null,
+                sessionIndex: player.sessions.length
             });
         }
 
@@ -158,29 +197,66 @@ function calculateCombinedStandings(sessions) {
         let validOmwCount = 0;
         let omwSum = 0;
 
-        if (useSpecialScoring && completedSessions.length >= 2) {
+        if (useSpecialScoring) {
             // Sort by points (descending), then by OMW (descending)
             const sortedSessions = [...completedSessions].sort((a, b) => {
                 if (a.points !== b.points) return b.points - a.points;
                 return (b.omw || 0) - (a.omw || 0);
             });
 
-            const highest = sortedSessions[0];
-            const lowest = sortedSessions[sortedSessions.length - 1];
+            if (useLongMode && completedSessions.length >= 3) {
+                const dropCount = Math.min(2, sortedSessions.length);
+                const droppedSessions = dropCount > 0 ? sortedSessions.slice(-dropCount) : [];
 
-            // Calculate total points
-            totalPoints = sortedSessions.reduce((sum, session) => sum + session.points, 0);
-            totalPoints += highest.points; // Double the highest
-            totalPoints -= lowest.points; // Remove the lowest
+                // Calculate total points
+                totalPoints = sortedSessions.reduce((sum, session) => sum + session.points, 0);
+                droppedSessions.forEach(session => {
+                    totalPoints -= session.points;
+                });
 
-            // Calculate OMW (counting each OMW just once)
-            sortedSessions.forEach(session => {
-                if (session === lowest) return; // Skip lowest OMW
-                if (session.omw) {
-                    omwSum += session.omw;
-                    validOmwCount++;
+                // Double the 9th session only if it exists
+                const lastSession = completedSessions.find(
+                    session => session.sessionIndex === LONG_TOTAL_SESSIONS - 1
+                );
+                if (lastSession && lastSession.points !== null) {
+                    totalPoints += lastSession.points;
                 }
-            });
+
+                // Calculate OMW (exclude dropped sessions)
+                sortedSessions.forEach(session => {
+                    if (droppedSessions.includes(session)) return;
+                    if (session.omw) {
+                        omwSum += session.omw;
+                        validOmwCount++;
+                    }
+                });
+            } else if (completedSessions.length >= 2) {
+                const highest = sortedSessions[0];
+                const lowest = sortedSessions[sortedSessions.length - 1];
+
+                // Calculate total points
+                totalPoints = sortedSessions.reduce((sum, session) => sum + session.points, 0);
+                totalPoints += highest.points; // Double the highest
+                totalPoints -= lowest.points; // Remove the lowest
+
+                // Calculate OMW (counting each OMW just once)
+                sortedSessions.forEach(session => {
+                    if (session === lowest) return; // Skip lowest OMW
+                    if (session.omw) {
+                        omwSum += session.omw;
+                        validOmwCount++;
+                    }
+                });
+            } else {
+                // Regular scoring fallback for single-session data
+                totalPoints = completedSessions.reduce((sum, session) => {
+                    if (session.omw) {
+                        omwSum += session.omw;
+                        validOmwCount++;
+                    }
+                    return sum + (session.points || 0);
+                }, 0);
+            }
         } else {
             // Regular scoring
             totalPoints = completedSessions.reduce((sum, session) => {
@@ -234,9 +310,10 @@ function displayCombinedStandings(sessions) {
         .map(s => s.eventDate)
         .filter(Boolean)
         .sort();
+    const totalSessionsTarget = getTotalSessionsTarget();
     const dateRange = dates.length > 0 
-        ? `Sessions ${sessions.length}/6 (${dates[0]} - ${dates[dates.length-1]})`
-        : `Sessions ${sessions.length}/6`;
+        ? `Sessions ${sessions.length}/${totalSessionsTarget} (${dates[0]} - ${dates[dates.length-1]})`
+        : `Sessions ${sessions.length}/${totalSessionsTarget}`;
     document.getElementById('event-date').textContent = dateRange;
 
     const combinedStandings = calculateCombinedStandings(sessions);
