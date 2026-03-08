@@ -263,3 +263,66 @@ main {
     bottom: 0;
     width: 100%;
 }
+
+.score-chart-content {
+    display: flex;
+}
+
+.score-chart {
+  margin-top: 1.5rem;
+  max-width: 800px;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.score-row .name {
+  width: 140px;
+  font-weight: 600;
+}
+
+.score-col {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+.score-bar {
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  display: flex;
+  border: 1px solid #bbb;
+  background: #f5f5f5;
+  overflow: hidden;
+
+  &.positive-col {
+    align-items: end;
+    flex: 0 0 var(--positive-flex-basis);
+  }
+}
+
+.name-col {
+    text-align: right;;
+}
+
+.score-bar__zero {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(0, 0, 0, 0.3);
+  transform: translateX(-50%);
+}
+
+.score-segment {
+  height: 100%;
+}
+
+.score-normal { background: #3ea4e2; }
+.score-doubled { background: #2b8a4d; }
+.score-ignored { background: #999; }

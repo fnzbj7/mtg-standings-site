@@ -1,10 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>MTG Standings</title>
-		<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAMFBMVEUAAADMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMyRtK0KAAAAEHRSTlMAECAwQFBgcICPn6+/z9/vIxqCigAAAMlJREFUOMuFU0kOxCAMq4OzZPn/f2fLMNCqrVSpAtsJqLX+GGOttR4uRf4nxjD3hM8+volRtnl1m7tDSQx4SzwiIrOQmPAq8brEifLly+6qxCRxouPJskT+nFg4kQwZCxJTxKQEBxLrJE4Sm/+KxIjc8xIXSkRI3CRenHhQIjNLUoK9uEnsnnhRQlaJHUh8uC+xS5y4RuLb7xInSsiRuIXEgxJckjiQuPEcJUQPi0hQIsKVSDBKvGpfYpL48ERQ4kUJSSQkVpLwA9s8G+pXEr8SAAAAAElFTkSuQmCC" />
+		<link
+			rel="icon"
+			href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAMFBMVEUAAADMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMyRtK0KAAAAEHRSTlMAECAwQFBgcICPn6+/z9/vIxqCigAAAMlJREFUOMuFU0kOxCAMq4OzZPn/f2fLMNCqrVSpAtsJqLX+GGOttR4uRf4nxjD3hM8+volRtnl1m7tDSQx4SzwiIrOQmPAq8brEifLly+6qxCRxouPJskT+nFg4kQwZCxJTxKQEBxLrJE4Sm/+KxIjc8xIXSkRI3CRenHhQIjNLUoK9uEnsnnhRQlaJHUh8uC+xS5y4RuLb7xInSsiRuIXEgxJckjiQuPEcJUQPi0hQIsKVSDBKvGpfYpL48ERQ4kUJSSQkVpLwA9s8G+pXEr8SAAAAAElFTkSuQmCC"
+		/>
 		<link rel="stylesheet" href="styles/main.css" />
 	</head>
 	<body>
@@ -60,6 +63,13 @@
 					<!-- Player standings will be dynamically inserted here -->
 				</tbody>
 			</table>
+			<section id="score-chart" class="score-chart">
+				<h2>Score Breakdown</h2>
+				<div id="score-chart-content" class="score-chart-content">
+
+				</div>
+				<!-- JS will populate rows here -->
+			</section>
 		</main>
 		<script src="js/data.js"></script>
 		<script type="module" src="js/app.js"></script>
