@@ -265,7 +265,7 @@ main {
 }
 
 .score-chart-content {
-    display: flex;
+    overflow-x: auto;
 }
 
 .score-chart {
@@ -273,50 +273,109 @@ main {
   max-width: 800px;
 }
 
-.score-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.6rem;
+.score-chart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  table-layout: fixed;
+  font-family: inherit;
+  font-size: 0.95rem;
 }
 
-.score-row .name {
-  width: 140px;
+.score-chart-table th,
+.score-chart-table td {
+  padding: 12px;
+  border: 1px solid #dddddd;
+  vertical-align: middle;
+}
+
+.score-chart-table th {
+  background: #35424a;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+}
+
+.score-chart-table th:nth-child(1),
+.score-chart-table td:nth-child(1) { /* Rank */
+  width: 40px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.score-chart-table th:nth-child(2),
+.score-chart-table td:nth-child(2) { /* Name */
+  width: 200px;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.score-chart-table th:nth-child(3),
+.score-chart-table td:nth-child(3) { /* Points */
+  width: 70px;
+  min-width: 70px;
+  text-align: center;
+}
+
+.score-chart-table th:nth-child(4),
+.score-chart-table td:nth-child(4) { /* Bar */
+  width: auto;
+}
+
+.score-chart-table tr:nth-child(even) {
+  background: #f2f2f2;
+}
+
+.score-chart-table tr:hover {
+  background: #f0f0f0;
+}
+
+.score-name {
+  width: 210px;
+  max-width: 210px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: 600;
 }
 
-.score-col {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
+.score-bar-cell {
+  width: 100%;
 }
 
 .score-bar {
-  flex: 1;
-  flex-direction: column;
-  gap: 4px;
-  position: relative;
   display: flex;
+  height: 18px;
   border: 1px solid #bbb;
   background: #f5f5f5;
   overflow: hidden;
-
-  &.positive-col {
-    align-items: end;
-    flex: 0 0 var(--positive-flex-basis);
-  }
+  border-radius: 4px;
 }
 
-.name-col {
-    text-align: right;;
+.score-bar-side {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
 }
 
-.score-bar__zero {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: rgba(0, 0, 0, 0.3);
-  transform: translateX(-50%);
+.score-bar-negative {
+  justify-content: flex-start;
+  flex: 0 0 var(--score-chart-neg-basis, 25%);
+}
+
+.score-bar-positive {
+  justify-content: flex-end;
+  flex: 0 0 var(--score-chart-pos-basis, 75%);
+}
+
+.score-chart-empty {
+  padding: 1rem;
+  color: #555;
+  font-style: italic;
 }
 
 .score-segment {

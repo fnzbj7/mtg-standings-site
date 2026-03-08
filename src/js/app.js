@@ -93,12 +93,6 @@ function updateScoringModeAvailability() {
 	});
 }
 
-function createCol(cls) {
-	const col = document.createElement('div');
-	col.className = cls;
-	return col;
-}
-
 fileInput.addEventListener('change', async (e) => {
 	const file = e.target.files[0];
 	if (!file) return;
@@ -388,16 +382,23 @@ function renderScoreChart(players) {
 	// Clear any previous rows (keep the heading)
 	chart.replaceChildren();
 
+	// If there are no players, show a small placeholder
+	if (!players || players.length === 0) {
+		const empty = document.createElement('div');
+		empty.className = 'score-chart-empty';
+		empty.textContent = 'Upload a file to see score breakdowns.';
+		chart.appendChild(empty);
+		return;
+	}
+
 	const maxTotalPos = Math.max(
 		1,
 		...players.map((p) => {
 			const b = p.chartBreakdown || {
-				// ignoredPoints: 0,
 				normalPoints: 0,
 				doubledPoints: 0,
 			};
-			// return b.ignoredPoints + b.normalPoints + b.doubledPoints;
-			return  b.normalPoints + b.doubledPoints;
+			return b.normalPoints + b.doubledPoints;
 		}),
 	);
 
@@ -407,19 +408,19 @@ function renderScoreChart(players) {
 			const b = p.chartBreakdown || {
 				ignoredPoints: 0,
 			};
-			return b.ignoredPoints
+			return b.ignoredPoints;
 		}),
 	);
 
-	const maxIgnored = Math.max(
-		0,
-		...players.map((p) => p.chartBreakdown?.ignoredPoints || 0),
-	);
+	const totalRange = maxTotalPos + maxTotalNeg;
+	const posBasisPct = (maxTotalPos / totalRange) * 100;
+	const negBasisPct = (maxTotalNeg / totalRange) * 100;
 
-	// const zeroLinePercent = (maxIgnored / maxTotalPos) * 100;
+	chart.style.setProperty('--score-chart-pos-basis', `${posBasisPct}%`);
+	chart.style.setProperty('--score-chart-neg-basis', `${negBasisPct}%`);
 
 	const createSegment = (widthPercent, cls, title) => {
-		// if (!widthPercent || widthPercent <= 0) return null;
+		if (!widthPercent || widthPercent <= 0) return null;
 		const seg = document.createElement('div');
 		seg.className = `score-segment ${cls}`;
 		seg.style.width = `${widthPercent}%`;
@@ -427,25 +428,21 @@ function renderScoreChart(players) {
 		return seg;
 	};
 
-	// Find the highest total points for scaling
-	players;
+	const table = document.createElement('table');
+	table.className = 'score-chart-table';
 
-	// Create name column, positive column and negative column
-    const nameCol = createCol('name-col');
+	const thead = document.createElement('thead');
+	const headerRow = document.createElement('tr');
+	headerRow.innerHTML = `
+		<th>Rank</th>
+		<th>Name</th>
+		<th>Pts</th>
+		<th>Score Breakdown</th>
+	`;
+	thead.appendChild(headerRow);
+	table.appendChild(thead);
 
-    const scores = createCol('score-col');
-    const positiveCol = createCol('positive-col score-bar'); // 
-    const negativeCol = createCol('negative-col score-bar');
-
-	chart.appendChild(nameCol);
-    scores.appendChild(positiveCol);
-    scores.appendChild(negativeCol);
-    chart.appendChild(scores);
-
-	console.log({maxTotalPos, maxTotalNeg, a: maxTotalNeg / maxTotalPos});
-
-    maxTotalNeg / maxTotalPos
-	document.documentElement.style.setProperty('--positive-flex-basis', `${Number((maxTotalNeg / maxTotalPos * 100).toFixed(2))}%`);
+	const tbody = document.createElement('tbody');
 
 	players.forEach((player) => {
 		const breakdown = player.chartBreakdown || {
@@ -454,29 +451,45 @@ function renderScoreChart(players) {
 			doubledPoints: 0,
 		};
 
-		//const row = document.createElement('div');
-		//row.className = 'score-row';
+		const normalPct =
+			maxTotalPos > 0
+				? (breakdown.normalPoints / maxTotalPos) * 100
+				: 0;
+		const doubledPct =
+			maxTotalPos > 0
+				? (breakdown.doubledPoints / maxTotalPos) * 100
+				: 0;
+		const ignoredPct =
+			maxTotalNeg > 0
+				? (breakdown.ignoredPoints / maxTotalNeg) * 100
+				: 0;
 
-		const label = document.createElement('div');
-		label.className = 'name';
-		label.textContent = player.name;
-		//row.appendChild(label);
-        nameCol.appendChild(label);
+		const row = document.createElement('tr');
+		row.className = 'score-row';
+
+		const rankCell = document.createElement('td');
+		rankCell.className = 'score-rank';
+		rankCell.textContent = player.rank || '';
+
+		const nameCell = document.createElement('td');
+		nameCell.className = 'score-name';
+		nameCell.textContent = player.name;
+
+		const pointsCell = document.createElement('td');
+		pointsCell.className = 'score-points';
+		pointsCell.textContent = player.points != null ? player.points : '';
+
+		const barCell = document.createElement('td');
+		barCell.className = 'score-bar-cell';
 
 		const bar = document.createElement('div');
 		bar.className = 'score-bar';
 
-		
+		const positiveSide = document.createElement('div');
+		positiveSide.className = 'score-bar-side score-bar-positive';
+		const negativeSide = document.createElement('div');
+		negativeSide.className = 'score-bar-side score-bar-negative';
 
-		const ignoredPct = (breakdown.ignoredPoints / maxTotalNeg) * 100;
-		const normalPct = (breakdown.normalPoints / maxTotalPos) * 100;
-		const doubledPct = (breakdown.doubledPoints / maxTotalPos) * 100;
-
-		const ignoredSeg = createSegment(
-			ignoredPct,
-			'score-ignored',
-			`Ignored: ${breakdown.ignoredPoints}`,
-		);
 		const normalSeg = createSegment(
 			normalPct,
 			'score-normal',
@@ -487,14 +500,29 @@ function renderScoreChart(players) {
 			'score-doubled',
 			`Doubled: ${breakdown.doubledPoints}`,
 		);
+		const ignoredSeg = createSegment(
+			ignoredPct,
+			'score-ignored',
+			`Ignored: ${breakdown.ignoredPoints}`,
+		);
 
-		if (ignoredSeg) negativeCol.appendChild(ignoredSeg);
-		if (normalSeg) positiveCol.appendChild(normalSeg);
-		// if (doubledSeg) negativeCol.appendChild(doubledSeg);
+		if (normalSeg) positiveSide.appendChild(normalSeg);
+		if (doubledSeg) positiveSide.appendChild(doubledSeg);
+		if (ignoredSeg) negativeSide.appendChild(ignoredSeg);
 
-		// row.appendChild(bar);
-		// chart.appendChild(row);
+		bar.appendChild(positiveSide);
+		bar.appendChild(negativeSide);
+		barCell.appendChild(bar);
+
+		row.appendChild(rankCell);
+		row.appendChild(nameCell);
+		row.appendChild(pointsCell);
+		row.appendChild(barCell);
+		tbody.appendChild(row);
 	});
+
+	table.appendChild(tbody);
+	chart.appendChild(table);
 }
 
 // Add a reset button
