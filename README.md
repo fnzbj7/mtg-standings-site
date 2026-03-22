@@ -11,8 +11,12 @@ mtg-standings-site
 │   ├── styles
 │   │   └── main.css       # CSS styles for the website
 │   ├── js
-│   │   ├── app.js         # Main JavaScript logic
-│   │   └── data.js        # Data management functions
+│   │   ├── app.js         # Main JavaScript logic (entry point)
+│   │   ├── constants.js   # Shared constants
+│   │   ├── data.js        # Data management functions
+│   │   ├── standings.js   # Standings calculation logic
+│   │   ├── storage.js     # localStorage helpers
+│   │   └── ui.js          # UI rendering and event handling
 │   └── data
 │       └── sample-event.json # Sample event data in JSON format
 ├── .gitignore             # Git ignore file
