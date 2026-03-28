@@ -30,9 +30,46 @@ main {
     padding: 0 20px;
 }
 
-#upload-form {
-    text-align: center;
-    margin: 20px 0;
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 24px;
+}
+
+.upload-form {
+    text-align: left;
+    display: grid;
+    gap: 16px;
+}
+
+.file-label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.button-row {
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.panel {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 1px 6px rgba(15, 23, 42, 0.08);
+}
+
+.card {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.table-wrap {
+    overflow-x: auto;
 }
 
 #file-input {
@@ -72,7 +109,7 @@ button:hover {
     overflow-x: auto;
 }
 
-#standings {
+.standings-table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
@@ -81,60 +118,60 @@ button:hover {
     table-layout: fixed;
 }
 
-#standings th,
-#standings td {
+.standings-table th,
+.standings-table td {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 12px;
 }
 
-#standings th {
+.standings-table th {
     background-color: #35424a;
     color: white;
 }
 
-#standings tr:nth-child(even) {
+.standings-table tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
-#standings tr:hover {
+.standings-table tr:hover {
     background-color: #f0f0f0;
 }
 
-#standings tr:nth-child(8) {
+.standings-table tr:nth-child(8) {
     border-bottom: 3px solid #35424a;
 }
 
-#standings tr:nth-child(-n+8) td {
+.standings-table tr:nth-child(-n+8) td {
     font-weight: 500;
     background-color: #fff;
 }
 
-#standings tr:hover td {
+.standings-table tr:hover td {
     background-color: #f0f0f0;
 }
 
-#standings tr:nth-child(1) td {
+.standings-table tr:nth-child(1) td {
     background-color: #ffd70033;
 }
 
-#standings tr:nth-child(2) td {
+.standings-table tr:nth-child(2) td {
     background-color: #c0c0c033;
 }
 
-#standings tr:nth-child(3) td {
+.standings-table tr:nth-child(3) td {
     background-color: #cd7f3233;
 }
 
-#standings th:nth-child(1),
-#standings td:nth-child(1) {
-    width: 50px;
-    min-width: 50px;
+.standings-table th:nth-child(1),
+.standings-table td:nth-child(1) {
+    width: 40px;
+    min-width: 40px;
     text-align: center;
 }
 
-#standings th:nth-child(2),
-#standings td:nth-child(2) {
+.standings-table th:nth-child(2),
+.standings-table td:nth-child(2) {
     width: 200px;
     max-width: 200px;
     white-space: nowrap;
@@ -142,25 +179,25 @@ button:hover {
     text-overflow: ellipsis;
 }
 
-#standings th:nth-child(3),
-#standings td:nth-child(3) {
+.standings-table th:nth-child(3),
+.standings-table td:nth-child(3) {
     width: 70px;
     min-width: 70px;
     padding-right: 12px;
     text-align: center;
 }
 
-#standings th:nth-child(4),
-#standings td:nth-child(4),
-#standings th:nth-child(5),
-#standings td:nth-child(5) {
+.standings-table th:nth-child(4),
+.standings-table td:nth-child(4),
+.standings-table th:nth-child(5),
+.standings-table td:nth-child(5) {
     width: 50px;
     min-width: 50px;
     text-align: center;
 }
 
-#standings th:nth-child(6),
-#standings td:nth-child(6) {
+.standings-table th:nth-child(6),
+.standings-table td:nth-child(6) {
     width: 80px;
     min-width: 80px;
     text-align: center;
@@ -303,7 +340,6 @@ button:hover {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #ffffff;
     font-weight: bold;
 }
 
@@ -332,19 +368,19 @@ button:hover {
         padding: 0 10px;
     }
 
-    #standings,
+    .standings-table,
     .score-chart-table {
         font-size: 0.9rem;
         table-layout: auto;
     }
 
-    #standings th:nth-child(4),
-    #standings th:nth-child(5) {
+    .standings-table th:nth-child(4),
+    .standings-table th:nth-child(5) {
         font-size: 0.8rem;
     }
 
-    #standings th,
-    #standings td {
+    .standings-table th,
+    .standings-table td {
         padding: 8px;
     }
 
@@ -355,8 +391,8 @@ button:hover {
 }
 
 @media screen and (max-width: 466px) {
-    #standings th:nth-child(6),
-    #standings td:nth-child(6) {
+    .standings-table th:nth-child(6),
+    .standings-table td:nth-child(6) {
         display: none;
     }
 }
