@@ -1,62 +1,75 @@
-# MTG Standings Site
+# React + TypeScript + Vite
 
-This project is a simple web application designed to display the standings of players in Magic: The Gathering events. It fetches data from a JSON file and presents it in a user-friendly format.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Project Structure
+Currently, two official plugins are available:
 
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+
+Note: This will impact Vite dev & build performances.
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-mtg-standings-site
-├── src
-│   ├── index.html         # Main HTML document
-│   ├── styles
-│   │   └── main.css       # CSS styles for the website
-│   ├── js
-│   │   ├── app.js         # Main JavaScript logic (entry point)
-│   │   ├── constants.js   # Shared constants
-│   │   ├── data.js        # Data management functions
-│   │   ├── standings.js   # Standings calculation logic
-│   │   ├── storage.js     # localStorage helpers
-│   │   └── ui.js          # UI rendering and event handling
-│   └── data
-│       └── sample-event.json # Sample event data in JSON format
-├── .gitignore             # Git ignore file
-├── package.json           # npm configuration file
-└── README.md              # Project documentation
+
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-## Getting Started
-
-To get a local copy up and running, follow these simple steps:
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/mtg-standings-site.git
-   ```
-
-2. **Navigate to the project directory**
-   ```bash
-   cd mtg-standings-site
-   ```
-
-3. **Install dependencies**
-   If you have npm installed, run:
-   ```bash
-   npm install
-   ```
-
-4. **Open the index.html file**
-   You can open the `src/index.html` file in your web browser to view the application.
-
-## Features
-
-- Displays player standings including points and OMW%.
-- Fetches data from a JSON file for easy updates.
-- Responsive design for better usability on different devices.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements.
-
-## License
-
-This project is open-source and available under the [MIT License](LICENSE).
