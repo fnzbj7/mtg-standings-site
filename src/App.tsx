@@ -123,7 +123,11 @@ function App() {
 
                 <StandingsTable combinedStandings={combinedStandings} />
                 <ScoreChart combinedStandings={combinedStandings} />
-                <RoundScoresTable sessions={sessions} combinedStandings={combinedStandings} />
+                <RoundScoresTable
+                    sessions={sessions}
+                    combinedStandings={combinedStandings}
+                    scoringConfig={scoringConfig}
+                />
             </main>
         </>
     );

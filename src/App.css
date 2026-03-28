@@ -347,6 +347,18 @@ button:hover {
     white-space: nowrap;
 }
 
+.round-scores-table td.skipped-score {
+    background: #fef3c7;
+    color: #92400e;
+    font-weight: 700;
+}
+
+.round-scores-legend {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
 .round-scores-table td:empty {
     color: #9ca3af;
 }

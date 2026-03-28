@@ -1,26 +1,71 @@
-import type { PlayerStanding, SessionData } from '../lib/types';
+import type { PlayerStanding, SessionData, ScoringConfig } from '../lib/types';
 
 type RoundScoresTableProps = {
     sessions: SessionData[];
     combinedStandings: PlayerStanding[];
+    scoringConfig: ScoringConfig;
+};
+
+type RoundScoreCell = {
+    value: number;
+    skipped: boolean;
 };
 
 type RoundScoreRow = {
     name: string;
-    scores: Array<number | null>;
+    cells: RoundScoreCell[];
     totalPoints: number;
 };
 
-function buildRoundScores(sessions: SessionData[], combinedStandings: PlayerStanding[]) {
+function sortRoundsByPointsThenOmwDesc(
+    rounds: Array<{ points: number; omw: number | null; roundIndex: number }>,
+) {
+    return [...rounds].sort((a, b) => {
+        if (a.points !== b.points) return b.points - a.points;
+        return (b.omw ?? 0) - (a.omw ?? 0);
+    });
+}
+
+function buildRoundScores(
+    sessions: SessionData[],
+    combinedStandings: PlayerStanding[],
+    scoringConfig: ScoringConfig,
+) {
     const roundCount = sessions.length;
-    const rows: RoundScoreRow[] = combinedStandings.map((player) => ({
-        name: player.name || 'Unknown',
-        scores: sessions.map((session) => {
+
+    const rows: RoundScoreRow[] = combinedStandings.map((player) => {
+        const playerRounds = sessions.map((session, roundIndex) => {
             const sessionPlayer = session.players.find((playerRow) => playerRow.name === player.name);
-            return sessionPlayer?.points ?? null;
-        }),
-        totalPoints: player.points,
-    }));
+            return {
+                roundIndex,
+                points: sessionPlayer?.points ?? 0,
+                omw: sessionPlayer?.omw ?? null,
+            };
+        });
+
+        const skippedIndexes = new Set<number>();
+
+        if (scoringConfig.useSpecialScoring) {
+            const sortedRounds = sortRoundsByPointsThenOmwDesc(playerRounds);
+
+            if (scoringConfig.useLongMode && playerRounds.length >= 3) {
+                const dropCount = Math.min(2, playerRounds.length);
+                sortedRounds.slice(-dropCount).forEach((round) => skippedIndexes.add(round.roundIndex));
+            } else if (!scoringConfig.useLongMode && playerRounds.length >= 2) {
+                const lowest = sortedRounds[sortedRounds.length - 1];
+                skippedIndexes.add(lowest.roundIndex);
+            }
+        }
+
+        return {
+            name: player.name || 'Unknown',
+            cells: playerRounds.map((round) => ({
+                value: round.points,
+                skipped: skippedIndexes.has(round.roundIndex),
+            })),
+            totalPoints: player.points,
+        };
+    });
 
     return {
         roundCount,
@@ -28,8 +73,12 @@ function buildRoundScores(sessions: SessionData[], combinedStandings: PlayerStan
     };
 }
 
-export default function RoundScoresTable({ sessions, combinedStandings }: RoundScoresTableProps) {
-    const { roundCount, rows } = buildRoundScores(sessions, combinedStandings);
+export default function RoundScoresTable({
+    sessions,
+    combinedStandings,
+    scoringConfig,
+}: RoundScoresTableProps) {
+    const { roundCount, rows } = buildRoundScores(sessions, combinedStandings, scoringConfig);
 
     if (roundCount === 0) {
         return null;
@@ -50,11 +99,14 @@ export default function RoundScoresTable({ sessions, combinedStandings }: RoundS
                         </tr>
                     </thead>
                     <tbody>
-                        {rows.map((row) => (
-                            <tr key={row.name}>
+                        {rows.map((row, rowIndex) => (
+                            <tr key={`${row.name}-${rowIndex}`}>
                                 <td>{row.name}</td>
-                                {row.scores.map((score, index) => (
-                                    <td key={index}>{score != null ? score : '-'}</td>
+                                {row.cells.map((cell, index) => (
+                                    <td key={index} className={cell.skipped ? 'skipped-score' : undefined}>
+                                        {cell.value}
+                                        {cell.skipped ? '*' : ''}
+                                    </td>
                                 ))}
                                 <td>{row.totalPoints}</td>
                             </tr>
@@ -62,6 +114,7 @@ export default function RoundScoresTable({ sessions, combinedStandings }: RoundS
                     </tbody>
                 </table>
             </div>
+            <div className='round-scores-legend'>* skipped score under special scoring</div>
         </section>
     );
 }
