@@ -306,6 +306,51 @@ button:hover {
     width: auto;
 }
 
+.round-scores-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    table-layout: fixed;
+    font-family: inherit;
+    font-size: 0.95rem;
+}
+
+.round-scores-table th,
+.round-scores-table td {
+    padding: 12px;
+    border: 1px solid #dddddd;
+    text-align: center;
+}
+
+.round-scores-table th {
+    background: #35424a;
+    color: white;
+    font-weight: 600;
+}
+
+.round-scores-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+}
+
+.round-scores-table tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+.round-scores-table td {
+    min-width: 60px;
+}
+
+.round-scores-table td:last-child {
+    white-space: nowrap;
+}
+
+.round-scores-table td:empty {
+    color: #9ca3af;
+}
+
 .score-chart-table tr:nth-child(even) {
     background: #f2f2f2;
 }

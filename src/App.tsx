@@ -3,6 +3,7 @@ import FileUpload from './components/FileUpload';
 import ScoringOptions from './components/ScoringOptions';
 import StandingsTable from './components/StandingsTable';
 import ScoreChart from './components/ScoreChart';
+import RoundScoresTable from './components/RoundScoresTable';
 import { useSessions } from './hooks/useSessions';
 import { calculateCombinedStandingsWithConfig } from './lib/standings';
 import { processEventData, readUploadedFile } from './lib/data';
@@ -122,6 +123,7 @@ function App() {
 
                 <StandingsTable combinedStandings={combinedStandings} />
                 <ScoreChart combinedStandings={combinedStandings} />
+                <RoundScoresTable sessions={sessions} combinedStandings={combinedStandings} />
             </main>
         </>
     );
