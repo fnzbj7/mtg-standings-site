@@ -68,6 +68,48 @@ main {
     border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+.scoring-panel {
+    display: grid;
+    gap: 16px;
+}
+
+.scoring-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.config-toggle {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 50%;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.config-toggle:hover,
+.config-toggle:focus-visible {
+    background: #e2e8f0;
+    outline: none;
+}
+
+.checkbox-row {
+    display: grid;
+    gap: 12px;
+}
+
+.config-summary {
+    color: #475569;
+    font-size: 0.95rem;
+}
+
 .table-wrap {
     overflow-x: auto;
 }
