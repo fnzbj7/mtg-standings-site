@@ -75,7 +75,7 @@ export default function ScoringOptions({
 			</div>
 
 			{showAdvanced && (
-				<fieldset className='radio-group'>
+				<fieldset className='radio-group border-2 border-bs-2 border-be-2 border-gray-300 p-2 m-2'>
 					<legend>Advanced scoring mode</legend>
 					<label className='radio-label'>
 						<input
@@ -116,16 +116,18 @@ export default function ScoringOptions({
 										: DEFAULT_NUMBER_OF_ROUNDS,
 								);
 							}}
+                            className='input-base'
 						/>
 					</div>
 					<div className='checkbox-row'>
-						<label className='checkbox-label'>
+						<label className='checkbox-label w-fit'>
 							<input
 								type='checkbox'
 								checked={skipLowest}
 								onChange={(event) =>
 									onToggleSkipLowest(event.target.checked)
 								}
+                                className='mr-1'
 							/>
 							<span>Skip lowest score(s)</span>
 						</label>
@@ -143,6 +145,7 @@ export default function ScoringOptions({
 											: DEFAULT_SKIP_LOWEST_COUNT,
 									);
 								}}
+                                className='input-base'
 							/>
 						)}
 					</div>
