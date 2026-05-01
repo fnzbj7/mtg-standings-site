@@ -18,6 +18,16 @@ export interface SessionData {
   players: SessionPlayer[];
 }
 
+export interface AppConfig {
+  specialScoring: boolean;
+  scoringMode: ScoringMode;
+  numberOfRounds: number;
+  skipLowest: boolean;
+  skipLowestCount: number;
+  doubleHighest: boolean;
+  doubleLast: boolean;
+}
+
 export interface ScoringConfig {
   useSpecialScoring: boolean;
   useLongMode: boolean;

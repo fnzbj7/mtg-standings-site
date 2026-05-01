@@ -1,5 +1,43 @@
-import { STORAGE_KEY } from './constants';
-import type { SessionData } from './types';
+import { CONFIG_STORAGE_KEY, DEFAULT_NUMBER_OF_ROUNDS, DEFAULT_SKIP_LOWEST_COUNT, STORAGE_KEY } from './constants';
+import type { AppConfig, SessionData } from './types';
+
+const DEFAULT_CONFIG: AppConfig = {
+  specialScoring: false,
+  scoringMode: 'standard',
+  numberOfRounds: DEFAULT_NUMBER_OF_ROUNDS,
+  skipLowest: false,
+  skipLowestCount: DEFAULT_SKIP_LOWEST_COUNT,
+  doubleHighest: false,
+  doubleLast: false,
+};
+
+export function loadConfig(): AppConfig {
+  try {
+    const saved = localStorage.getItem(CONFIG_STORAGE_KEY);
+    if (saved) {
+      return { ...DEFAULT_CONFIG, ...(JSON.parse(saved) as Partial<AppConfig>) };
+    }
+  } catch (error) {
+    console.error('Unable to load config:', error);
+  }
+  return { ...DEFAULT_CONFIG };
+}
+
+export function saveConfig(config: AppConfig): void {
+  try {
+    localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
+  } catch (error) {
+    console.error('Unable to save config:', error);
+  }
+}
+
+export function clearConfig(): void {
+  try {
+    localStorage.removeItem(CONFIG_STORAGE_KEY);
+  } catch (error) {
+    console.error('Unable to clear config:', error);
+  }
+}
 
 export function loadSavedSessions(): SessionData[] {
   try {

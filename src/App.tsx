@@ -5,16 +5,18 @@ import StandingsTable from './components/StandingsTable';
 import ScoreChart from './components/ScoreChart';
 import RoundScoresTable from './components/RoundScoresTable';
 import { useSessions } from './hooks/useSessions';
+import { useAppConfig } from './hooks/useAppConfig';
 import { calculateCombinedStandingsWithConfig } from './lib/standings';
 import { processEventData, readUploadedFile } from './lib/data';
-import type { ScoringConfig, ScoringMode, SessionData } from './lib/types';
+import type { ScoringConfig, SessionData } from './lib/types';
 import './App.css';
 
 function App() {
     const [fileContent, setFileContent] = useState('');
     const [errorText, setErrorText] = useState<string | null>(null);
-    const [specialScoring, setSpecialScoring] = useState(false);
-    const [scoringMode, setScoringMode] = useState<ScoringMode>('standard');
+
+    const { config, updateConfig, resetConfig } = useAppConfig();
+    const { specialScoring, scoringMode } = config;
 
     const { sessions, addOrUpdateSession, resetSessions } = useSessions();
 
@@ -85,10 +87,9 @@ function App() {
 
     const handleReset = () => {
         resetSessions();
+        resetConfig();
         setFileContent('');
         setErrorText(null);
-        setSpecialScoring(false);
-        setScoringMode('standard');
     };
 
     return (
@@ -111,13 +112,23 @@ function App() {
                     <ScoringOptions
                         specialScoring={specialScoring}
                         scoringMode={scoringMode}
+                        numberOfRounds={config.numberOfRounds}
+                        skipLowest={config.skipLowest}
+                        skipLowestCount={config.skipLowestCount}
+                        doubleHighest={config.doubleHighest}
+                        doubleLast={config.doubleLast}
                         onToggleSpecialScoring={(value) => {
-                            setSpecialScoring(value);
-                            if (!value) {
-                                setScoringMode('standard');
-                            }
+                            updateConfig({
+                                specialScoring: value,
+                                ...(!value && { scoringMode: 'standard' }),
+                            });
                         }}
-                        onChangeMode={setScoringMode}
+                        onChangeMode={(mode) => updateConfig({ scoringMode: mode })}
+                        onChangeNumberOfRounds={(value) => updateConfig({ numberOfRounds: value })}
+                        onToggleSkipLowest={(value) => updateConfig({ skipLowest: value })}
+                        onChangeSkipLowestCount={(value) => updateConfig({ skipLowestCount: value })}
+                        onToggleDoubleHighest={(value) => updateConfig({ doubleHighest: value })}
+                        onToggleDoubleLast={(value) => updateConfig({ doubleLast: value })}
                     />
                 </section>
 
