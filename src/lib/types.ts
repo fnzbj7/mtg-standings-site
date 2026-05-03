@@ -34,6 +34,7 @@ export interface ScoringConfig {
   skipLowest: boolean;
   skipLowestCount: number;
   doubleHighest: boolean;
+  doubleLast: boolean;
   numberOfRounds: number;
   totalSessionsTarget: number;
 }

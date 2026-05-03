@@ -101,18 +101,24 @@ function resolveSkipCount(config: ScoringConfig) {
 }
 
 function calculateSpecialNormalScoring(
-  completedSessions: Array<{ points: number | null; omw: number | null }>,
+  completedSessions: Array<{ points: number | null; omw: number | null; sessionIndex: number }>,
   configuredSkipCount: number,
   shouldDoubleHighest: boolean,
+  shouldDoubleLast: boolean,
+  configuredNumberOfRounds: number,
 ) {
   const sortedSessions = sortSessionsByPointsThenOmw(completedSessions);
   const rawSum = sumPoints(completedSessions);
   const highest = sortedSessions[0];
   const dropCount = Math.min(configuredSkipCount, sortedSessions.length);
   const droppedSessions = dropCount > 0 ? sortedSessions.slice(-dropCount) : [];
+  const configuredLastRoundIndex = Math.max(0, configuredNumberOfRounds - 1);
+  const lastSession = completedSessions.find((session) => session.sessionIndex === configuredLastRoundIndex);
 
   const ignoredPoints = sumPoints(droppedSessions);
-  const doubledPoints = shouldDoubleHighest && highest?.points != null ? highest.points : 0;
+  const doubledHighestPoints = shouldDoubleHighest && highest?.points != null ? highest.points : 0;
+  const doubledLastPoints = shouldDoubleLast && lastSession?.points != null ? lastSession.points : 0;
+  const doubledPoints = doubledHighestPoints + doubledLastPoints;
   const earnedBase = rawSum - ignoredPoints;
   const normalPoints = Math.max(0, earnedBase - doubledPoints);
   const totalPoints = earnedBase + doubledPoints;
@@ -131,6 +137,7 @@ function calculateSpecialLongScoring(
   completedSessions: Array<{ points: number | null; omw: number | null; sessionIndex: number }>,
   configuredNumberOfRounds: number,
   configuredSkipCount: number,
+  shouldDoubleLast: boolean,
 ) {
   const sortedSessions = sortSessionsByPointsThenOmw(completedSessions);
   const rawSum = sumPoints(completedSessions);
@@ -140,7 +147,7 @@ function calculateSpecialLongScoring(
 
   const configuredLastRoundIndex = Math.max(0, configuredNumberOfRounds - 1);
   const lastSession = completedSessions.find((session) => session.sessionIndex === configuredLastRoundIndex);
-  const doubledPoints = lastSession?.points != null ? lastSession.points : 0;
+  const doubledPoints = shouldDoubleLast && lastSession?.points != null ? lastSession.points : 0;
   const earnedBase = rawSum - ignoredPoints;
   const normalPoints = Math.max(0, earnedBase - doubledPoints);
   const totalPoints = earnedBase + doubledPoints;
@@ -166,11 +173,22 @@ function calculateScoring(
   const configuredSkipCount = resolveSkipCount(config);
 
   if (config.useLongMode && completedSessions.length >= 3) {
-    return calculateSpecialLongScoring(completedSessions, config.numberOfRounds, configuredSkipCount);
+    return calculateSpecialLongScoring(
+      completedSessions,
+      config.numberOfRounds,
+      configuredSkipCount,
+      config.doubleLast,
+    );
   }
 
   if (completedSessions.length >= 2) {
-    return calculateSpecialNormalScoring(completedSessions, configuredSkipCount, config.doubleHighest);
+    return calculateSpecialNormalScoring(
+      completedSessions,
+      configuredSkipCount,
+      config.doubleHighest,
+      config.doubleLast,
+      config.numberOfRounds,
+    );
   }
 
   return calculateRegularScoring(completedSessions);
