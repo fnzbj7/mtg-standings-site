@@ -27,10 +27,19 @@ function App() {
         () => ({
             useSpecialScoring: specialScoring,
             useLongMode: specialScoring && scoringMode === 'long',
+            skipLowest: config.skipLowest,
+            skipLowestCount: config.skipLowestCount,
             numberOfRounds,
             totalSessionsTarget,
         }),
-        [specialScoring, scoringMode, numberOfRounds, totalSessionsTarget],
+        [
+            specialScoring,
+            scoringMode,
+            config.skipLowest,
+            config.skipLowestCount,
+            numberOfRounds,
+            totalSessionsTarget,
+        ],
     );
 
     const combinedStandings = useMemo(

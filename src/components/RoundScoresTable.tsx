@@ -45,15 +45,15 @@ function buildRoundScores(
 
         const skippedIndexes = new Set<number>();
 
-        if (scoringConfig.useSpecialScoring) {
+        if (scoringConfig.useSpecialScoring && scoringConfig.skipLowest) {
             const sortedRounds = sortRoundsByPointsThenOmwDesc(playerRounds);
-
-            if (scoringConfig.useLongMode && playerRounds.length >= 3) {
-                const dropCount = Math.min(2, playerRounds.length);
-                sortedRounds.slice(-dropCount).forEach((round) => skippedIndexes.add(round.roundIndex));
-            } else if (!scoringConfig.useLongMode && playerRounds.length >= 2) {
-                const lowest = sortedRounds[sortedRounds.length - 1];
-                skippedIndexes.add(lowest.roundIndex);
+            const parsedCount = Math.floor(scoringConfig.skipLowestCount);
+            const requestedCount = Number.isFinite(parsedCount) && parsedCount > 0 ? parsedCount : 0;
+            const dropCount = Math.min(requestedCount, playerRounds.length);
+            if(dropCount !== 0) {
+                sortedRounds
+                    .slice(-dropCount)
+                    .forEach((round) => skippedIndexes.add(round.roundIndex));
             }
         }
 

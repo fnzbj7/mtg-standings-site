@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
 	DEFAULT_NUMBER_OF_ROUNDS,
-	DEFAULT_SKIP_LOWEST_COUNT,
 } from '../lib/constants';
 import type { ScoringMode } from '../lib/types';
 
@@ -138,7 +137,7 @@ export default function ScoringOptions({
 							<input
 								id='skip-lowest-count'
 								type='number'
-								min={1}
+								min={0}
 								value={skipLowestCount}
 								onChange={(event) => {
 									const parsed = parseInt(
@@ -146,9 +145,9 @@ export default function ScoringOptions({
 										10,
 									);
 									onChangeSkipLowestCount(
-										parsed > 0
+										parsed >= 0
 											? parsed
-											: DEFAULT_SKIP_LOWEST_COUNT,
+											: 0,
 									);
 								}}
 								className='input-base'

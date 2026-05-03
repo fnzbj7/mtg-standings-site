@@ -31,6 +31,8 @@ export interface AppConfig {
 export interface ScoringConfig {
   useSpecialScoring: boolean;
   useLongMode: boolean;
+  skipLowest: boolean;
+  skipLowestCount: number;
   numberOfRounds: number;
   totalSessionsTarget: number;
 }
