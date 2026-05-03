@@ -131,7 +131,6 @@ function App() {
                     />
                     <ScoringOptions
                         specialScoring={specialScoring}
-                        scoringMode={scoringMode}
                         numberOfRounds={config.numberOfRounds}
                         skipLowest={config.skipLowest}
                         skipLowestCount={config.skipLowestCount}
@@ -143,7 +142,6 @@ function App() {
                                 ...(!value && { scoringMode: 'standard' }),
                             });
                         }}
-                        onChangeMode={(mode) => updateConfig({ scoringMode: mode })}
                         onChangeNumberOfRounds={(value) => updateConfig({ numberOfRounds: value })}
                         onToggleSkipLowest={(value) => updateConfig({ skipLowest: value })}
                         onChangeSkipLowestCount={(value) => updateConfig({ skipLowestCount: value })}

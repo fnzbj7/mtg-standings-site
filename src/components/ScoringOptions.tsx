@@ -2,18 +2,15 @@ import { useState } from 'react';
 import {
 	DEFAULT_NUMBER_OF_ROUNDS,
 } from '../lib/constants';
-import type { ScoringMode } from '../lib/types';
 
 type ScoringOptionsProps = {
 	specialScoring: boolean;
-	scoringMode: ScoringMode;
 	numberOfRounds: number;
 	skipLowest: boolean;
 	skipLowestCount: number;
 	doubleHighest: boolean;
 	doubleLast: boolean;
 	onToggleSpecialScoring: (value: boolean) => void;
-	onChangeMode: (mode: ScoringMode) => void;
 	onChangeNumberOfRounds: (value: number) => void;
 	onToggleSkipLowest: (value: boolean) => void;
 	onChangeSkipLowestCount: (value: number) => void;
@@ -21,21 +18,14 @@ type ScoringOptionsProps = {
 	onToggleDoubleLast: (value: boolean) => void;
 };
 
-const scoringModeLabels: Record<ScoringMode, string> = {
-	standard: 'Skip 1, double highest',
-	long: 'Long event (9 sessions, 2 skips, double last)',
-};
-
 export default function ScoringOptions({
 	specialScoring,
-	scoringMode,
 	numberOfRounds,
 	skipLowest,
 	skipLowestCount,
 	doubleHighest,
 	doubleLast,
 	onToggleSpecialScoring,
-	onChangeMode,
 	onChangeNumberOfRounds,
 	onToggleSkipLowest,
 	onChangeSkipLowestCount,
@@ -70,38 +60,11 @@ export default function ScoringOptions({
 					/>
 					<span>Enable special scoring</span>
 				</label>
-				{specialScoring && (
-					<div className='config-summary'>
-						Active mode: {scoringModeLabels[scoringMode]}
-					</div>
-				)}
 			</div>
 
 			{showAdvanced && (
 				<fieldset className='radio-group border-2 border-bs-2 border-be-2 border-gray-300 p-2 m-2'>
-					<legend>Advanced scoring mode</legend>
-					<label className='radio-label'>
-						<input
-							type='radio'
-							name='special-scoring-mode'
-							value='standard'
-							checked={scoringMode === 'standard'}
-							onChange={() => onChangeMode('standard')}
-						/>
-						<span>Skip 1, double highest</span>
-					</label>
-					<label className='radio-label'>
-						<input
-							type='radio'
-							name='special-scoring-mode'
-							value='long'
-							checked={scoringMode === 'long'}
-							onChange={() => onChangeMode('long')}
-						/>
-						<span>
-							Long event (9 sessions, 2 skips, double last)
-						</span>
-					</label>
+					<legend>Advanced scoring</legend>
 					<div className='number-input-row'>
 						<label htmlFor='number-of-rounds'>
 							Number of rounds
