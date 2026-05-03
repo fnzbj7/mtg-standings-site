@@ -23,6 +23,12 @@ header p {
     font-size: 1rem;
 }
 
+.header-warning {
+    margin: 6px 0 0;
+    color: #fde68a;
+    font-size: 0.9rem;
+}
+
 main {
     width: 80%;
     max-width: 1200px;

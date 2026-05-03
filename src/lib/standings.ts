@@ -1,5 +1,4 @@
 import type { ScoringConfig, PlayerStanding, SessionData } from './types';
-import { LONG_TOTAL_SESSIONS } from './constants';
 
 function getOrCreatePlayer(playerMap: Map<string, { name: string; sessions: Array<{ points: number | null; omw: number | null; sessionIndex: number }>; participatedSessions: number; }>, playerName: string) {
   if (!playerMap.has(playerName)) {
@@ -110,14 +109,18 @@ function calculateSpecialNormalScoring(completedSessions: Array<{ points: number
   };
 }
 
-function calculateSpecialLongScoring(completedSessions: Array<{ points: number | null; omw: number | null; sessionIndex: number }>) {
+function calculateSpecialLongScoring(
+  completedSessions: Array<{ points: number | null; omw: number | null; sessionIndex: number }>,
+  configuredNumberOfRounds: number,
+) {
   const sortedSessions = sortSessionsByPointsThenOmw(completedSessions);
   const rawSum = sumPoints(completedSessions);
   const dropCount = Math.min(2, sortedSessions.length);
   const droppedSessions = sortedSessions.slice(-dropCount);
   const ignoredPoints = sumPoints(droppedSessions);
 
-  const lastSession = completedSessions.find((session) => session.sessionIndex === LONG_TOTAL_SESSIONS - 1);
+  const configuredLastRoundIndex = Math.max(0, configuredNumberOfRounds - 1);
+  const lastSession = completedSessions.find((session) => session.sessionIndex === configuredLastRoundIndex);
   const doubledPoints = lastSession?.points != null ? lastSession.points : 0;
   const earnedBase = rawSum - ignoredPoints;
   const normalPoints = Math.max(0, earnedBase - doubledPoints);
@@ -142,7 +145,7 @@ function calculateScoring(
   }
 
   if (config.useLongMode && completedSessions.length >= 3) {
-    return calculateSpecialLongScoring(completedSessions);
+    return calculateSpecialLongScoring(completedSessions, config.numberOfRounds);
   }
 
   if (completedSessions.length >= 2) {

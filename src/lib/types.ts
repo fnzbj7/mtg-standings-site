@@ -31,6 +31,7 @@ export interface AppConfig {
 export interface ScoringConfig {
   useSpecialScoring: boolean;
   useLongMode: boolean;
+  numberOfRounds: number;
   totalSessionsTarget: number;
 }
 

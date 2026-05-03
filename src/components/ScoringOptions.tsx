@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { DEFAULT_NUMBER_OF_ROUNDS, DEFAULT_SKIP_LOWEST_COUNT } from '../lib/constants';
+import {
+	DEFAULT_NUMBER_OF_ROUNDS,
+	DEFAULT_SKIP_LOWEST_COUNT,
+} from '../lib/constants';
 import type { ScoringMode } from '../lib/types';
 
 type ScoringOptionsProps = {
@@ -116,7 +119,7 @@ export default function ScoringOptions({
 										: DEFAULT_NUMBER_OF_ROUNDS,
 								);
 							}}
-                            className='input-base'
+							className='input-base'
 						/>
 					</div>
 					<div className='checkbox-row'>
@@ -127,7 +130,7 @@ export default function ScoringOptions({
 								onChange={(event) =>
 									onToggleSkipLowest(event.target.checked)
 								}
-                                className='mr-1'
+								className='mr-1'
 							/>
 							<span>Skip lowest score(s)</span>
 						</label>
@@ -138,37 +141,46 @@ export default function ScoringOptions({
 								min={1}
 								value={skipLowestCount}
 								onChange={(event) => {
-									const parsed = parseInt(event.target.value, 10);
+									const parsed = parseInt(
+										event.target.value,
+										10,
+									);
 									onChangeSkipLowestCount(
 										parsed > 0
 											? parsed
 											: DEFAULT_SKIP_LOWEST_COUNT,
 									);
 								}}
-                                className='input-base'
+								className='input-base'
 							/>
 						)}
 					</div>
-					<label className='checkbox-label'>
-						<input
-							type='checkbox'
-							checked={doubleHighest}
-							onChange={(event) =>
-								onToggleDoubleHighest(event.target.checked)
-							}
-						/>
-						<span>Double highest score</span>
-					</label>
-					<label className='checkbox-label'>
-						<input
-							type='checkbox'
-							checked={doubleLast}
-							onChange={(event) =>
-								onToggleDoubleLast(event.target.checked)
-							}
-						/>
-						<span>Double last round</span>
-					</label>
+					<div>
+						<label className='checkbox-label'>
+							<input
+								type='checkbox'
+								checked={doubleHighest}
+								onChange={(event) =>
+									onToggleDoubleHighest(event.target.checked)
+								}
+								className='mr-1'
+							/>
+							<span>Double highest score</span>
+						</label>
+					</div>
+					<div>
+						<label className='checkbox-label'>
+							<input
+								type='checkbox'
+								checked={doubleLast}
+								onChange={(event) =>
+									onToggleDoubleLast(event.target.checked)
+								}
+								className='mr-1'
+							/>
+							<span>Double last round</span>
+						</label>
+					</div>
 				</fieldset>
 			)}
 		</div>

@@ -16,19 +16,21 @@ function App() {
     const [errorText, setErrorText] = useState<string | null>(null);
 
     const { config, updateConfig, resetConfig } = useAppConfig();
-    const { specialScoring, scoringMode } = config;
+    const { specialScoring, scoringMode, numberOfRounds } = config;
 
     const { sessions, addOrUpdateSession, resetSessions } = useSessions();
 
-    const totalSessionsTarget = specialScoring && scoringMode === 'long' ? 9 : 6;
+    const totalSessionsTarget = numberOfRounds;
+    const hasOverroundWarning = sessions.length > totalSessionsTarget;
 
     const scoringConfig = useMemo<ScoringConfig>(
         () => ({
             useSpecialScoring: specialScoring,
             useLongMode: specialScoring && scoringMode === 'long',
+            numberOfRounds,
             totalSessionsTarget,
         }),
-        [specialScoring, scoringMode, totalSessionsTarget],
+        [specialScoring, scoringMode, numberOfRounds, totalSessionsTarget],
     );
 
     const combinedStandings = useMemo(
@@ -99,6 +101,11 @@ function App() {
                 <p>
                     Event Date: <span id='event-date'>{eventDateSummary}</span>
                 </p>
+                {hasOverroundWarning && (
+                    <p className='header-warning'>
+                        Warning: Uploaded sessions exceed configured rounds. Round {totalSessionsTarget} is treated as the configured last round.
+                    </p>
+                )}
             </header>
 
             <main>
