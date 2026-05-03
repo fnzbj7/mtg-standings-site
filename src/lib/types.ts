@@ -33,6 +33,7 @@ export interface ScoringConfig {
   useLongMode: boolean;
   skipLowest: boolean;
   skipLowestCount: number;
+  doubleHighest: boolean;
   numberOfRounds: number;
   totalSessionsTarget: number;
 }

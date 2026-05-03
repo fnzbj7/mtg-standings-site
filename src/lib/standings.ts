@@ -103,6 +103,7 @@ function resolveSkipCount(config: ScoringConfig) {
 function calculateSpecialNormalScoring(
   completedSessions: Array<{ points: number | null; omw: number | null }>,
   configuredSkipCount: number,
+  shouldDoubleHighest: boolean,
 ) {
   const sortedSessions = sortSessionsByPointsThenOmw(completedSessions);
   const rawSum = sumPoints(completedSessions);
@@ -111,7 +112,7 @@ function calculateSpecialNormalScoring(
   const droppedSessions = dropCount > 0 ? sortedSessions.slice(-dropCount) : [];
 
   const ignoredPoints = sumPoints(droppedSessions);
-  const doubledPoints = highest?.points != null ? highest.points : 0;
+  const doubledPoints = shouldDoubleHighest && highest?.points != null ? highest.points : 0;
   const earnedBase = rawSum - ignoredPoints;
   const normalPoints = Math.max(0, earnedBase - doubledPoints);
   const totalPoints = earnedBase + doubledPoints;
@@ -169,7 +170,7 @@ function calculateScoring(
   }
 
   if (completedSessions.length >= 2) {
-    return calculateSpecialNormalScoring(completedSessions, configuredSkipCount);
+    return calculateSpecialNormalScoring(completedSessions, configuredSkipCount, config.doubleHighest);
   }
 
   return calculateRegularScoring(completedSessions);

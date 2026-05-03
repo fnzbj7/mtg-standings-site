@@ -66,6 +66,7 @@ export default function ScoringOptions({
 						onChange={(event) =>
 							onToggleSpecialScoring(event.target.checked)
 						}
+						className='mr-1'
 					/>
 					<span>Enable special scoring</span>
 				</label>
