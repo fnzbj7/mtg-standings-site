@@ -60,9 +60,13 @@ export function saveSessions(sessions: SessionData[]): void {
 }
 
 export function addOrUpdateSession(newSession: SessionData, sessions: SessionData[]): SessionData[] {
-  const existingIndex = sessions.findIndex(
-    (session) => session.eventDate === newSession.eventDate,
-  );
+  const existingIndex = sessions.findIndex((session) => {
+    if (newSession.uploadId && session.uploadId) {
+      return session.uploadId === newSession.uploadId;
+    }
+
+    return session.eventDate === newSession.eventDate;
+  });
 
   const nextSessions = [...sessions];
 

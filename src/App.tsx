@@ -66,8 +66,7 @@ function App() {
         return `Sessions ${dates.length}/${totalSessionsTarget} (${dates[0]} - ${dates[dates.length - 1]})`;
     }, [sessions, totalSessionsTarget]);
 
-    const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0] ?? null;
+    const handleUploadedFile = async (file: File | null) => {
         if (!file) return;
 
         try {
@@ -80,6 +79,7 @@ function App() {
 
             const resolvedSession: SessionData = {
                 ...sessionData,
+                uploadId: `${file.name}::${file.lastModified}::${file.size}`,
                 eventDate:
                     sessionData.eventDate ||
                     new Date(file.lastModified).toLocaleDateString(),
@@ -97,6 +97,17 @@ function App() {
                 error instanceof Error ? error.message : 'Unknown error';
             setErrorText(`Error reading file: ${message}`);
             setFileContent('');
+        }
+    };
+
+    const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0] ?? null;
+        await handleUploadedFile(file);
+    };
+
+    const handleFileDrop = async (files: File[]) => {
+        for (const file of files) {
+            await handleUploadedFile(file);
         }
     };
 
@@ -125,6 +136,7 @@ function App() {
                 <section className='controls-grid'>
                     <FileUpload
                         onFileChange={handleFileChange}
+                        onFileDrop={handleFileDrop}
                         onReset={handleReset}
                         errorText={errorText}
                         fileContent={fileContent}

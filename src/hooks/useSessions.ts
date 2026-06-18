@@ -10,9 +10,9 @@ export function useSessions() {
     const [sessions, setSessions] = useState<SessionData[]>(() => loadSavedSessions());
 
     const updateSessions = (newSession: SessionData) => {
-        const nextSessions = addOrUpdateSession(newSession, sessions);
-        setSessions(nextSessions);
-        return nextSessions;
+        setSessions((currentSessions) =>
+            addOrUpdateSession(newSession, currentSessions),
+        );
     };
 
     const clearSessions = () => {

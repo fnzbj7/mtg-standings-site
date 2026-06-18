@@ -50,6 +50,11 @@ main {
     gap: 16px;
 }
 
+.drag-active {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
 .file-label {
     display: flex;
     flex-direction: column;

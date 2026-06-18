@@ -1,7 +1,8 @@
-import type { ChangeEvent } from 'react';
+import { useState, type ChangeEvent, type DragEvent } from 'react';
 
 type FileUploadProps = {
 	onFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
+	onFileDrop: (files: File[]) => void;
 	onReset: () => void;
 	errorText?: string | null;
 	fileContent?: string;
@@ -9,16 +10,58 @@ type FileUploadProps = {
 
 export default function FileUpload({
 	onFileChange,
+	onFileDrop,
 	onReset,
 	errorText,
 	fileContent,
 }: FileUploadProps) {
+	const [isDragActive, setIsDragActive] = useState(false);
+
+	const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		if (!isDragActive) {
+			setIsDragActive(true);
+		}
+	};
+
+	const handleDragEnter = (event: DragEvent<HTMLLabelElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setIsDragActive(true);
+	};
+
+	const handleDragLeave = (event: DragEvent<HTMLLabelElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setIsDragActive(false);
+	};
+
+	const handleDrop = (event: DragEvent<HTMLLabelElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setIsDragActive(false);
+
+		const files = Array.from(event.dataTransfer.files ?? []).sort((a, b) =>
+			a.name.localeCompare(b.name, undefined, {
+				numeric: true,
+				sensitivity: 'base',
+			}),
+		);
+		onFileDrop(files);
+	};
+
 	return (
 		<div className='panel card'>
 			<h2>Upload standings</h2>
 			<form className='upload-form'>
 				<div className='max-w-xl'>
-					<label className='flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none'>
+					<label
+						className={`flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none ${isDragActive ? 'drag-active' : ''}`}
+						onDragEnter={handleDragEnter}
+						onDragOver={handleDragOver}
+						onDragLeave={handleDragLeave}
+						onDrop={handleDrop}>
 						<span className='flex items-center space-x-2'>
 							<svg
 								xmlns='http://www.w3.org/2000/svg'
@@ -34,7 +77,7 @@ export default function FileUpload({
 								/>
 							</svg>
 							<span className='font-medium text-gray-600'>
-								Drop files to Attach, or
+								Drop a file here, or
 								<span className='text-blue-600 underline pl-1'>
 									browse
 								</span>

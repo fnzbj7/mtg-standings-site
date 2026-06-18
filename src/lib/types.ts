@@ -14,6 +14,7 @@ export interface SessionData {
   title: string | null;
   event: string | null;
   eventDate: string | null;
+  uploadId?: string;
   raw?: string;
   players: SessionPlayer[];
 }
