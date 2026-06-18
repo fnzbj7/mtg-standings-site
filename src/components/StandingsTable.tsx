@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react';
 import type { PlayerStanding } from '../lib/types';
-import { downloadTableAsImage } from '../lib/tableImage';
+import { buildRoundTimestampedName, downloadTableAsImage } from '../lib/tableImage';
 
 type StandingsTableProps = {
     combinedStandings: PlayerStanding[];
+    currentRound: number;
 };
 
-export default function StandingsTable({ combinedStandings }: StandingsTableProps) {
+export default function StandingsTable({ combinedStandings, currentRound }: StandingsTableProps) {
     const tableRef = useRef<HTMLTableElement | null>(null);
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadError, setDownloadError] = useState<string | null>(null);
@@ -20,7 +21,10 @@ export default function StandingsTable({ combinedStandings }: StandingsTableProp
         setDownloadError(null);
 
         try {
-            await downloadTableAsImage(tableRef.current, 'combined-standings');
+            await downloadTableAsImage(
+                tableRef.current,
+                buildRoundTimestampedName('combined-standings', currentRound),
+            );
         } catch {
             setDownloadError('Unable to download this table image. Please try again.');
         } finally {

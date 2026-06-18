@@ -162,8 +162,14 @@ function App() {
                     />
                 </section>
 
-                <StandingsTable combinedStandings={combinedStandings} />
-                <ScoreChart combinedStandings={combinedStandings} />
+                <StandingsTable
+                    combinedStandings={combinedStandings}
+                    currentRound={sessions.length}
+                />
+                <ScoreChart
+                    combinedStandings={combinedStandings}
+                    currentRound={sessions.length}
+                />
                 <RoundScoresTable
                     sessions={sessions}
                     combinedStandings={combinedStandings}

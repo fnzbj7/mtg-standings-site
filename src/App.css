@@ -197,10 +197,13 @@ button:hover {
     overflow-x: auto;
 }
 
+.table-wrap {
+    margin: 20px 0;
+}
+
 .standings-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
     background: #fff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     table-layout: fixed;

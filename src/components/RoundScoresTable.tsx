@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { PlayerStanding, SessionData, ScoringConfig } from '../lib/types';
-import { downloadTableAsImage } from '../lib/tableImage';
+import { buildRoundTimestampedName, downloadTableAsImage } from '../lib/tableImage';
 
 type RoundScoresTableProps = {
     sessions: SessionData[];
@@ -94,7 +94,10 @@ export default function RoundScoresTable({
         setDownloadError(null);
 
         try {
-            await downloadTableAsImage(tableRef.current, 'round-scores');
+            await downloadTableAsImage(
+                tableRef.current,
+                buildRoundTimestampedName('round-scores', roundCount),
+            );
         } catch {
             setDownloadError('Unable to download this table image. Please try again.');
         } finally {
