@@ -186,6 +186,44 @@ button:hover {
     border-radius: 6px;
 }
 
+.success-box {
+    position: relative;
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: #dcfce7;
+    color: #166534;
+    border-radius: 6px;
+}
+
+.success-close-button {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    margin: 0;
+    padding: 2px 8px;
+    background: transparent;
+    color: #166534;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.success-close-button:hover {
+    background: rgba(22, 101, 52, 0.12);
+}
+
+.success-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.uploaded-files-list {
+    margin: 0;
+    padding-left: 18px;
+}
+
 #file-content {
     width: 100%;
     margin: 20px 0;

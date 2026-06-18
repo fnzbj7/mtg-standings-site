@@ -12,7 +12,7 @@ import type { ScoringConfig, SessionData } from './lib/types';
 import './App.css';
 
 function App() {
-    const [fileContent, setFileContent] = useState('');
+    const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
     const [errorText, setErrorText] = useState<string | null>(null);
 
     const { config, updateConfig, resetConfig } = useAppConfig();
@@ -87,16 +87,16 @@ function App() {
 
             addOrUpdateSession(resolvedSession);
             setErrorText(null);
-            setFileContent(
-                typeof content === 'string'
-                    ? content
-                    : JSON.stringify(content, null, 2),
-            );
+            setUploadedFiles((currentFiles) => {
+                if (currentFiles.includes(file.name)) {
+                    return currentFiles;
+                }
+                return [...currentFiles, file.name];
+            });
         } catch (error) {
             const message =
                 error instanceof Error ? error.message : 'Unknown error';
             setErrorText(`Error reading file: ${message}`);
-            setFileContent('');
         }
     };
 
@@ -114,8 +114,12 @@ function App() {
     const handleReset = () => {
         resetSessions();
         resetConfig();
-        setFileContent('');
+        setUploadedFiles([]);
         setErrorText(null);
+    };
+
+    const handleClearUploadedFiles = () => {
+        setUploadedFiles([]);
     };
 
     return (
@@ -138,8 +142,9 @@ function App() {
                         onFileChange={handleFileChange}
                         onFileDrop={handleFileDrop}
                         onReset={handleReset}
+                        onClearUploadedFiles={handleClearUploadedFiles}
                         errorText={errorText}
-                        fileContent={fileContent}
+                        uploadedFiles={uploadedFiles}
                     />
                     <ScoringOptions
                         specialScoring={specialScoring}

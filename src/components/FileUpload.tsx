@@ -4,16 +4,18 @@ type FileUploadProps = {
 	onFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	onFileDrop: (files: File[]) => void;
 	onReset: () => void;
+	onClearUploadedFiles: () => void;
 	errorText?: string | null;
-	fileContent?: string;
+	uploadedFiles?: string[];
 };
 
 export default function FileUpload({
 	onFileChange,
 	onFileDrop,
 	onReset,
+	onClearUploadedFiles,
 	errorText,
-	fileContent,
+	uploadedFiles,
 }: FileUploadProps) {
 	const [isDragActive, setIsDragActive] = useState(false);
 
@@ -102,7 +104,23 @@ export default function FileUpload({
 				</div>
 			</form>
 			{errorText && <div className='error-box'>{errorText}</div>}
-			{fileContent && <pre className='file-content'>{fileContent}</pre>}
+			{uploadedFiles && uploadedFiles.length > 0 && (
+				<div className='success-box'>
+					<button
+						type='button'
+						className='success-close-button'
+						onClick={onClearUploadedFiles}
+						aria-label='Dismiss uploaded files message'>
+						×
+					</button>
+					<div className='success-title'>Uploaded files</div>
+					<ul className='uploaded-files-list'>
+						{uploadedFiles.map((fileName) => (
+							<li key={fileName}>{fileName}</li>
+						))}
+					</ul>
+				</div>
+			)}
 		</div>
 	);
 }
