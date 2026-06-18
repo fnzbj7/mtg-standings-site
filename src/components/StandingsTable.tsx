@@ -1,15 +1,47 @@
+import { useRef, useState } from 'react';
 import type { PlayerStanding } from '../lib/types';
+import { downloadTableAsImage } from '../lib/tableImage';
 
 type StandingsTableProps = {
     combinedStandings: PlayerStanding[];
 };
 
 export default function StandingsTable({ combinedStandings }: StandingsTableProps) {
+    const tableRef = useRef<HTMLTableElement | null>(null);
+    const [isDownloading, setIsDownloading] = useState(false);
+    const [downloadError, setDownloadError] = useState<string | null>(null);
+
+    const handleDownload = async () => {
+        if (!tableRef.current || isDownloading) {
+            return;
+        }
+
+        setIsDownloading(true);
+        setDownloadError(null);
+
+        try {
+            await downloadTableAsImage(tableRef.current, 'combined-standings');
+        } catch {
+            setDownloadError('Unable to download this table image. Please try again.');
+        } finally {
+            setIsDownloading(false);
+        }
+    };
+
     return (
         <section className='panel card'>
-            <h2>Combined standings</h2>
+            <div className='panel-header'>
+                <h2>Combined standings</h2>
+                <button
+                    type='button'
+                    className='table-download-button'
+                    onClick={handleDownload}
+                    disabled={isDownloading}>
+                    {isDownloading ? 'Preparing PNG...' : 'Download PNG'}
+                </button>
+            </div>
             <div className='table-wrap'>
-                <table className='standings-table'>
+                <table ref={tableRef} className='standings-table'>
                     <thead>
                         <tr>
                             <th>#</th>
@@ -42,6 +74,7 @@ export default function StandingsTable({ combinedStandings }: StandingsTableProp
                     </tbody>
                 </table>
             </div>
+            {downloadError && <p className='download-error'>{downloadError}</p>}
         </section>
     );
 }

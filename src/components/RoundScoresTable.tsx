@@ -1,4 +1,6 @@
+import { useRef, useState } from 'react';
 import type { PlayerStanding, SessionData, ScoringConfig } from '../lib/types';
+import { downloadTableAsImage } from '../lib/tableImage';
 
 type RoundScoresTableProps = {
     sessions: SessionData[];
@@ -79,6 +81,26 @@ export default function RoundScoresTable({
     scoringConfig,
 }: RoundScoresTableProps) {
     const { roundCount, rows } = buildRoundScores(sessions, combinedStandings, scoringConfig);
+    const tableRef = useRef<HTMLTableElement | null>(null);
+    const [isDownloading, setIsDownloading] = useState(false);
+    const [downloadError, setDownloadError] = useState<string | null>(null);
+
+    const handleDownload = async () => {
+        if (!tableRef.current || isDownloading) {
+            return;
+        }
+
+        setIsDownloading(true);
+        setDownloadError(null);
+
+        try {
+            await downloadTableAsImage(tableRef.current, 'round-scores');
+        } catch {
+            setDownloadError('Unable to download this table image. Please try again.');
+        } finally {
+            setIsDownloading(false);
+        }
+    };
 
     if (roundCount === 0) {
         return null;
@@ -86,9 +108,18 @@ export default function RoundScoresTable({
 
     return (
         <section className='panel card'>
-            <h2>Round-by-round scores</h2>
+            <div className='panel-header'>
+                <h2>Round-by-round scores</h2>
+                <button
+                    type='button'
+                    className='table-download-button'
+                    onClick={handleDownload}
+                    disabled={isDownloading}>
+                    {isDownloading ? 'Preparing PNG...' : 'Download PNG'}
+                </button>
+            </div>
             <div className='table-wrap'>
-                <table className='round-scores-table'>
+                <table ref={tableRef} className='round-scores-table'>
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -115,6 +146,7 @@ export default function RoundScoresTable({
                 </table>
             </div>
             <div className='round-scores-legend'>* skipped score under special scoring</div>
+            {downloadError && <p className='download-error'>{downloadError}</p>}
         </section>
     );
 }

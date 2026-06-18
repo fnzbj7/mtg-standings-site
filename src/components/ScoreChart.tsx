@@ -1,11 +1,16 @@
-import type { CSSProperties } from 'react';
+import { type CSSProperties, useRef, useState } from 'react';
 import type { PlayerStanding } from '../lib/types';
+import { downloadTableAsImage } from '../lib/tableImage';
 
 type ScoreChartProps = {
     combinedStandings: PlayerStanding[];
 };
 
 export default function ScoreChart({ combinedStandings }: ScoreChartProps) {
+    const tableRef = useRef<HTMLTableElement | null>(null);
+    const [isDownloading, setIsDownloading] = useState(false);
+    const [downloadError, setDownloadError] = useState<string | null>(null);
+
     const maxTotalPos = Math.max(
         0,
         ...combinedStandings.map(
@@ -21,6 +26,23 @@ export default function ScoreChart({ combinedStandings }: ScoreChartProps) {
     const posBasisPct = totalRange > 0 ? (maxTotalPos / totalRange) * 100 : 0;
     const negBasisPct = totalRange > 0 ? (maxTotalNeg / totalRange) * 100 : 0;
 
+    const handleDownload = async () => {
+        if (!tableRef.current || isDownloading || combinedStandings.length === 0) {
+            return;
+        }
+
+        setIsDownloading(true);
+        setDownloadError(null);
+
+        try {
+            await downloadTableAsImage(tableRef.current, 'score-breakdown');
+        } catch {
+            setDownloadError('Unable to download this table image. Please try again.');
+        } finally {
+            setIsDownloading(false);
+        }
+    };
+
     return (
         <section
             id='score-chart'
@@ -31,14 +53,23 @@ export default function ScoreChart({ combinedStandings }: ScoreChartProps) {
                     '--score-chart-neg-basis': `${negBasisPct}%`,
                 } as CSSProperties
             }>
-            <h2>Score Breakdown</h2>
+            <div className='panel-header'>
+                <h2>Score Breakdown</h2>
+                <button
+                    type='button'
+                    className='table-download-button'
+                    onClick={handleDownload}
+                    disabled={isDownloading || combinedStandings.length === 0}>
+                    {isDownloading ? 'Preparing PNG...' : 'Download PNG'}
+                </button>
+            </div>
             <div id='score-chart-content' className='score-chart-content'>
                 {combinedStandings.length === 0 ? (
                     <div className='score-chart-empty'>
                         Upload a file to see score breakdowns.
                     </div>
                 ) : (
-                    <table className='score-chart-table'>
+                    <table ref={tableRef} className='score-chart-table'>
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -109,6 +140,7 @@ export default function ScoreChart({ combinedStandings }: ScoreChartProps) {
                     </table>
                 )}
             </div>
+            {downloadError && <p className='download-error'>{downloadError}</p>}
         </section>
     );
 }
