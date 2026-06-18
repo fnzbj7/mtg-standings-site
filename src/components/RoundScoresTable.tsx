@@ -110,9 +110,9 @@ export default function RoundScoresTable({
     }
 
     return (
-        <section className='panel card'>
+        <section className='panel card mt-7'>
             <div className='panel-header'>
-                <h2>Round-by-round scores</h2>
+                <h2 className='font-bold text-lg'>Round-by-round scores</h2>
                 <button
                     type='button'
                     className='table-download-button'

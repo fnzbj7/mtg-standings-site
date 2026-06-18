@@ -50,7 +50,7 @@ export default function ScoreChart({ combinedStandings, currentRound }: ScoreCha
     return (
         <section
             id='score-chart'
-            className='score-chart'
+            className='score-chart panel card mt-7'
             style={
                 {
                     '--score-chart-pos-basis': `${posBasisPct}%`,
@@ -58,7 +58,7 @@ export default function ScoreChart({ combinedStandings, currentRound }: ScoreCha
                 } as CSSProperties
             }>
             <div className='panel-header'>
-                <h2>Score Breakdown</h2>
+                <h2 className='font-bold text-lg'>Score Breakdown</h2>
                 <button
                     type='button'
                     className='table-download-button'

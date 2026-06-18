@@ -35,7 +35,7 @@ export default function StandingsTable({ combinedStandings, currentRound }: Stan
     return (
         <section className='panel card'>
             <div className='panel-header'>
-                <h2>Combined standings</h2>
+                <h2 className='font-bold text-lg'>Combined standings</h2>
                 <button
                     type='button'
                     className='table-download-button'

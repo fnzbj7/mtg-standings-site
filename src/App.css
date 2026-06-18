@@ -294,14 +294,6 @@ button:hover {
     text-align: center;
 }
 
-.score-chart {
-    margin-top: 1.5rem;
-}
-
-.score-chart h2 {
-    margin-top: 0;
-}
-
 .score-chart-table {
     width: 100%;
     border-collapse: collapse;
